@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
-
+//comment
 #define N 50000
 #define CZ 48
 
