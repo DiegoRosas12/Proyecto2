@@ -5,11 +5,10 @@
 #include <time.h>
 #include <math.h>
 
-//comment
-//second comments
-//branchVSC
 #define N 50000
 #define CZ 48
+
+//nuevo
 
 int str2num(char *str)
 {
@@ -25,12 +24,11 @@ int str2num(char *str)
 	num = str[0] == 45 ? -num : num;
 	return num;
 }
-
 float mediaA(){
     return 0;
 }
 float mediaG(float P[]) {
-    int i=0;
+    int i=0, n;
     float r;
     for (i=0;i<n;i++){
         r *= P[i];
@@ -42,7 +40,8 @@ float varianza(float P[], int n,float media) {
     int i=0;
     float r;
     for(i=0;i<n;i++){
-        r += ((P[i] - media)(P[i] - media)) / ((float)(n));
+        //r += ((P[i] - media)(P[i] - media)) / ((float)(n));
+        r += P[i];
     }
     return r;
 }
@@ -55,7 +54,7 @@ float coeficienteV(float desviacion, float media) {
 
 float cuartiles(float *P,int n,float *Q)    //Pegar en main despuÈs: cuartiles(P,n,Cuart);
 {
-    int pos;
+    int pos, i;
     for(i=0;i<3;i++)
     {
         pos=ceil((i+1)*n/4);
@@ -66,7 +65,7 @@ float cuartiles(float *P,int n,float *Q)    //Pegar en main despuÈs: cuartiles(
 
 float deciles(float *P,int n,float *D)  //Pegar en main despuÈs: deciles(P,n,Deci);
 {
-    int pos;
+    int pos, i;
     for(i=0;i<9;i++)
     {
         pos=ceil((i+1)*n/10);
@@ -77,8 +76,8 @@ float deciles(float *P,int n,float *D)  //Pegar en main despuÈs: deciles(P,n,De
 
 float percentiles(float *P,int n,float *Pc) //Pegar en main despuÈs: percentiles(P,n,Percen);
 {
-    int pos;
-    for(i=0;i<3;i++)
+    int pos, i;
+    for(i=0;i<99;i++)
     {
         pos=ceil((i+1)*n/100);
         Pc[i]=n%2!=0?P[pos]:(P[pos]+P[pos+1])/2;
@@ -86,9 +85,12 @@ float percentiles(float *P,int n,float *Pc) //Pegar en main despuÈs: percentile
     return 0;
 }
 
+
+
+
 int main(int argc, char *argv[]) {
     float max, min, *P, aux, AnEs[9], Cuart[3], Deci[9], Percen[99];
-    int opc, n, i;
+    int opc, n, i, j;
     /*FILE *fp;
     fp = fopen("Analisis_estadistico.txt", "w");*/
     srand(time(NULL));
@@ -99,9 +101,10 @@ int main(int argc, char *argv[]) {
             // Manuales
             if (opc == 1) {
             do {
-                printf("Ingrese el n˙mero de elementos: ");
+                printf("Ingrese el numero de elementos: ");
                 scanf("%i", &n);
                 }while(n<1 || n>N);
+            P = (float*)malloc(n*sizeof(float));
             for(i = 0;i < n;i++) {
                 printf("P[%i] :",i+1);
                 scanf("%f",&P[i]);
@@ -109,23 +112,25 @@ int main(int argc, char *argv[]) {
             // Aleatorios
             }else{
             do {
-                printf("Ingrese el n˙mero de elementos: ");
+                printf("Ingrese el numero de elementos: ");
                 scanf("%i", &n);
                 }while(n<1 || n>N);
             printf("Ingrese el valor minimo: ");
             scanf("%f", &min);
             printf("Ingrese el valor maximo: ");
             scanf("%f", &max);
-            if (max < min) {
+            }
+            /*if (max < min) {
             max = max + min;
             min = max - min;
             max = max - min;
             }
-            P = (int*)malloc(n*sizeof(int));
+            P = (float*)malloc(n*sizeof(float));
 	        for (i = 0; i < n; i++)
 		    P[i] = (max - min)*rand() / RAND_MAX + min;
             for(i=0;i<n;i++)
-            printf("P[%i]: %.3f\n", i, P[i]);}
+            printf("P[%i]: %.3f\n", i+1, P[i]);}
+            */
             break;
         case 2:
             n = str2num(argv[1]);
@@ -145,21 +150,27 @@ int main(int argc, char *argv[]) {
             min = str2num(argv[2]);
             max = str2num(argv[3]);
     }
-    while (n < 1)
+    /*while (n < 1)
 	{
 		printf("Ingrese el numero de elementos: ");
 		scanf("%d", &n);
 	}
+    */
 	if (min > max)
-	{
+    {
 		min = min + max;
 		max = min - max;
 		min = min - max;
 	}
-	for (i = 0; i < n; i++)
+    P = (float*)malloc(n*sizeof(float));
+
+    if (opc != 1){
+        for (i = 0; i < n; i++)
         P[i] = (max - min)*rand() / RAND_MAX + min;
+    }
+	
     for(i=0;i<n;i++)
-        printf("P[%i]: %.3f\n", i, P[i]);
+        printf("P[%i]: %.3f\n", i+1, P[i]);
     for (i = 1; i < n; i++){   //Ordenar el vector
 		j = i-1;
 		while (P[j]>P[i]){
@@ -171,6 +182,9 @@ int main(int argc, char *argv[]) {
 				break;
 		}
 	}
+    printf("Ordenados:\n");
+    for(i=0;i<n;i++)
+        printf("P[%i]: %.3f\n", i+1, P[i]);
 	/*Eliminar esto, que debe hacer todos los an·lisis
     opc=\0;
     printf("Que desea calcular?\n1: Maximo\n2: Minimo\n3: Media aritmetica\n4: Media geometrica\n5: Mediana\n6: Moda\n7: Varianza\n8: Desviacion estandar\n9: Coeficiente de variacion\n10: Cuartiles\n11: Deciles\n12: Percentiles\n");
