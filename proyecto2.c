@@ -91,8 +91,8 @@ float percentiles(float *P,int n,float *Pc) //Pegar en main despuÈs: percentile
 int main(int argc, char *argv[]) {
     float max, min, *P, aux, AnEs[9], Cuart[3], Deci[9], Percen[99];
     int opc, n, i, j;
-    /*FILE *fp;
-    fp = fopen("Analisis_estadistico.txt", "w");*/
+    FILE *fp;
+    fp = fopen("Analisis_estadistico.txt", "w");
     srand(time(NULL));
     switch (argc) {
         case 1:
@@ -206,7 +206,7 @@ int main(int argc, char *argv[]) {
         default:
             break;
     }*/
-    /*for(i=0;i<9;i++)     (Registrar resultados en el texto)
+    for(i=0;i<9;i++)     (Registrar resultados en el texto)
         fprintf(fp,"Analisis %d: %f\n",i+1,AnEs[i]);
     fprintf(fp,"Cuartiles:\n");
     for(i=0;i<3;i++)
@@ -217,7 +217,7 @@ int main(int argc, char *argv[]) {
     fprintf(fp,"Percentiles:\n");
     for(i=0;i<99;i++)
         fprintf(fp,"\t%f",Percen[i]);
-    fclose(fp);*/
+    fclose(fp);
     free(P);
 return 0;
 }
