@@ -24,8 +24,26 @@ int str2num(char *str)
 	num = str[0] == 45 ? -num : num;
 	return num;
 }
-float mediaA(){
+float ordenar(float P[], int n){
+    int i, j, aux;
+    for (i = 1; i < n; i++){   //Ordenar el vector
+		j = i-1;
+		while (P[j]>P[i]){
+            aux = P[j];
+			P[j] = P[i];
+			j--;
+            P[i] = aux;
+			if (j == -1)
+				break;
+		}
+	}
     return 0;
+}
+float mediaA(float P[], int n) {
+    int i;
+    float med;
+    for (i = 0, med = 0; i < n; med+=P[i++]);
+    return med/n;
 }
 float mediaG(float P[]) {
     int i=0, n;
@@ -36,6 +54,10 @@ float mediaG(float P[]) {
     r = sqrtf(r);
     return r;
 }
+float moda(){
+    return 0;
+}
+// Falta completar varianza
 float varianza(float P[], int n,float media) {
     int i=0;
     float r;
@@ -51,7 +73,6 @@ float desviacionE(float varianza) {
 float coeficienteV(float desviacion, float media) {
     return (desviacion/media*100);
 }
-
 float cuartiles(float *P,int n,float *Q)    //Pegar en main despuÈs: cuartiles(P,n,Cuart);
 {
     int pos, i;
@@ -62,7 +83,6 @@ float cuartiles(float *P,int n,float *Q)    //Pegar en main despuÈs: cuartiles(
     }
     return 0;
 }
-
 float deciles(float *P,int n,float *D)  //Pegar en main despuÈs: deciles(P,n,Deci);
 {
     int pos, i;
@@ -73,7 +93,6 @@ float deciles(float *P,int n,float *D)  //Pegar en main despuÈs: deciles(P,n,De
     }
     return 0;
 }
-
 float percentiles(float *P,int n,float *Pc) //Pegar en main despuÈs: percentiles(P,n,Percen);
 {
     int pos, i;
@@ -87,8 +106,8 @@ float percentiles(float *P,int n,float *Pc) //Pegar en main despuÈs: percentile
 
 
 
-
 int main(int argc, char *argv[]) {
+    //*P
     float max, min, *P, aux, AnEs[9], Cuart[3], Deci[9], Percen[99];
     int opc, n, i, j;
     FILE *fp;
@@ -120,17 +139,6 @@ int main(int argc, char *argv[]) {
             printf("Ingrese el valor maximo: ");
             scanf("%f", &max);
             }
-            /*if (max < min) {
-            max = max + min;
-            min = max - min;
-            max = max - min;
-            }
-            P = (float*)malloc(n*sizeof(float));
-	        for (i = 0; i < n; i++)
-		    P[i] = (max - min)*rand() / RAND_MAX + min;
-            for(i=0;i<n;i++)
-            printf("P[%i]: %.3f\n", i+1, P[i]);}
-            */
             break;
         case 2:
             n = str2num(argv[1]);
@@ -169,54 +177,27 @@ int main(int argc, char *argv[]) {
         P[i] = (max - min)*rand() / RAND_MAX + min;
     }
 	
-    for(i=0;i<n;i++)
-        printf("P[%i]: %.3f\n", i+1, P[i]);
-    for (i = 1; i < n; i++){   //Ordenar el vector
-		j = i-1;
-		while (P[j]>P[i]){
-            aux = P[j];
-			P[j] = P[i];
-			j--;
-            P[i] = aux;
-			if (j == -1)
-				break;
-		}
-	}
     printf("Ordenados:\n");
+    ordenar(P,n);
     for(i=0;i<n;i++)
         printf("P[%i]: %.3f\n", i+1, P[i]);
-	/*Eliminar esto, que debe hacer todos los an·lisis
-    opc=\0;
-    printf("Que desea calcular?\n1: Maximo\n2: Minimo\n3: Media aritmetica\n4: Media geometrica\n5: Mediana\n6: Moda\n7: Varianza\n8: Desviacion estandar\n9: Coeficiente de variacion\n10: Cuartiles\n11: Deciles\n12: Percentiles\n");
-    scanf("%i", &opc);
-    switch (opc) {
-        case 1:
-        printf("Maximo\n");
-        break;
-        case 7:
-        printf("Varianza\n");
-        float media;
-        media = mediaA();
-        printf("Varianza: %f\n", varianza(P,n,media));
-        case 8:
-        printf("Desviacion estandar\n");
-        float media;
-        media = mediaA();
-        printf("Varianza: %f\n", varianza(P,n,media));
-        default:
-            break;
-    }*/
-    for(i=0;i<9;i++)     (Registrar resultados en el texto)
+    //(Registrar resultados en el texto)
+
+    for(i=0;i<9;i++)     
         fprintf(fp,"Analisis %d: %f\n",i+1,AnEs[i]);
+
     fprintf(fp,"Cuartiles:\n");
     for(i=0;i<3;i++)
         fprintf(fp,"\t%f",Cuart[i]);
+
     fprintf(fp,"Deciles:\n");
     for(i=0;i<9;i++)
         fprintf(fp,"\t%f",Deci[i]);
+
     fprintf(fp,"Percentiles:\n");
     for(i=0;i<99;i++)
         fprintf(fp,"\t%f",Percen[i]);
+    
     fclose(fp);
     free(P);
 return 0;
