@@ -25,17 +25,18 @@ int str2num(char *str)
 	return num;
 }
 float ordenar(float P[], int n){
-    int i, j, aux;
+    int i, j;
+    float aux;
     for (i = 1; i < n; i++){   //Ordenar el vector
 		j = i-1;
-		while (P[j]>P[i]){
-            aux = P[j];
-			P[j] = P[i];
+		aux = P[i];
+		while (aux<P[j]){
+			P[j+1] = P[j];
 			j--;
-            P[i] = aux;
 			if (j == -1)
 				break;
 		}
+		P[j+1] = aux;
 	}
     return 0;
 }
@@ -54,7 +55,14 @@ float mediaG(float P[]) {
     r = sqrtf(r);
     return r;
 }
+float mediana(float P[], n){
+	int num;
+	ordenar(P,n);
+	num = ceil(n/2);
+	return P[num];
+}
 float moda(){
+	
     return 0;
 }
 // Falta completar varianza
@@ -73,7 +81,7 @@ float desviacionE(float varianza) {
 float coeficienteV(float desviacion, float media) {
     return (desviacion/media*100);
 }
-float cuartiles(float *P,int n,float *Q)    //Pegar en main despuÈs: cuartiles(P,n,Cuart);
+float cuartiles(float *P,int n,float *Q)    //Pegar en main despuÃˆs: cuartiles(P,n,Cuart);
 {
     int pos, i;
     for(i=0;i<3;i++)
@@ -83,7 +91,7 @@ float cuartiles(float *P,int n,float *Q)    //Pegar en main despuÈs: cuartiles(
     }
     return 0;
 }
-float deciles(float *P,int n,float *D)  //Pegar en main despuÈs: deciles(P,n,Deci);
+float deciles(float *P,int n,float *D)  //Pegar en main despuÃˆs: deciles(P,n,Deci);
 {
     int pos, i;
     for(i=0;i<9;i++)
@@ -93,7 +101,7 @@ float deciles(float *P,int n,float *D)  //Pegar en main despuÈs: deciles(P,n,De
     }
     return 0;
 }
-float percentiles(float *P,int n,float *Pc) //Pegar en main despuÈs: percentiles(P,n,Percen);
+float percentiles(float *P,int n,float *Pc) //Pegar en main despuÃˆs: percentiles(P,n,Percen);
 {
     int pos, i;
     for(i=0;i<99;i++)
@@ -170,13 +178,13 @@ int main(int argc, char *argv[]) {
 		max = min - max;
 		min = min - max;
 	}
-    P = (float*)malloc(n*sizeof(float));
-
     if (opc != 1){
+		P = (float*)malloc(n*sizeof(float));
         for (i = 0; i < n; i++)
         P[i] = (max - min)*rand() / RAND_MAX + min;
     }
-	
+	for(i=0;i<n;i++)
+        printf("P[%i]: %.3f\n", i+1, P[i]);
     printf("Ordenados:\n");
     ordenar(P,n);
     for(i=0;i<n;i++)
