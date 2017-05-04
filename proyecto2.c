@@ -45,13 +45,16 @@ float mediaA(float P[], int n) {
     for (i = 0, med = 0; i < n; med+=P[i++]);
     return med/n;
 }
-float mediaG(float P[], int n) {
+long mediaG(float P[], int n) {
     int i=0;
-    float r=1;
+    long r=1;
     for (i=0;i<n;i++){
-        r *= P[i];
+        if(P[i]<0)
+        P[i] = P[i]*-1;
+        r *= powf(1/(float)n,P[i]);
+        printf("%lf\n",P[i]);
     }
-    return sqrtf(r);
+    return r;
 }
 float mediana(float P[], int n){
 	int num;
@@ -83,7 +86,7 @@ float desviacionE(float P[], int n) {
     return sqrt(r);
 }
 float coeficienteV(float P[],int n) {
-    return (desviacionE(P,n,mediaA(P,n))/mediaA(P,n)*100);
+    return (desviacionE(P,n) / (mediaA(P,n)*100));
 }
 float cuartiles(float *P,int n,float *Q)    //Pegar en main despuÃˆs: cuartiles(P,n,Cuart);
 {
@@ -207,14 +210,14 @@ int main(int argc, char *argv[]) {
     printf("Mediana: %f\n", mediana(P,n));
     fprintf(fp,"Mediana: %f\n", mediana(P,n));
 
-    printf("Varianza: %f\n", varianza(P, n, mediaA(P,n)));
-    fprintf(fp,"Varianza: %f\n", varianza(P, n, mediaA(P,n)));
+    printf("Varianza: %f\n", varianza(P, n));
+    fprintf(fp,"Varianza: %f\n", varianza(P, n));
 
-    printf("Desviacion Estandar: %f\n", desviacionE(P, n);
-    fprintf(fp,"Desviacion Estandar: %f\n", desviacionE(P, n);
+    printf("Desviacion Estandar: %f\n", desviacionE(P, n));
+    fprintf(fp,"Desviacion Estandar: %f\n", desviacionE(P, n));
 
-    printf("Coeficiente de Variacion: %f\n",coeficienteV(P,n);
-    fprintf(fp,"Coeficiente de Variacion: %f\n",coeficienteV(P,n);
+    printf("Coeficiente de Variacion: %f\n",coeficienteV(P,n));
+    fprintf(fp,"Coeficiente de Variacion: %f\n",coeficienteV(P,n));
     
     for(i=0;i<9;i++)     
         fprintf(fp,"Analisis %d: %f\n",i+1,AnEs[i]);
