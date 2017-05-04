@@ -45,16 +45,15 @@ float mediaA(float P[], int n) {
     for (i = 0, med = 0; i < n; med+=P[i++]);
     return med/n;
 }
-long mediaG(float P[], int n) {
+float mediaG(float P[], int n) {
     int i=0;
-    long r=1;
+    float r=1;
     for (i=0;i<n;i++){
         if(P[i]<0)
-        P[i] = P[i]*-1;
-        r *= powf(1/(float)n,P[i]);
-        printf("%lf\n",P[i]);
+        P[i] = P[i]*-1.0;
+        r *= P[i];
     }
-    return r;
+    return powf(r, (1.0/(float)n));
 }
 float mediana(float P[], int n){
 	int num;
@@ -122,9 +121,8 @@ float percentiles(float *P,int n,float *Pc) //Pegar en main despuÃˆs: percenti
 
 
 int main(int argc, char *argv[]) {
-    //*P
-    float max, min, *P, aux, AnEs[9], Cuart[3], Deci[9], Percen[99];
-    int opc, n, i, j;
+    float max, min, *P, Cuart[3], Deci[9], Percen[99];
+    int opc, n, i;
     FILE *fp;
     fp = fopen("Analisis_estadistico.txt", "w");
     srand(time(NULL));
@@ -198,42 +196,46 @@ int main(int argc, char *argv[]) {
         printf("P[%i]: %.3f\n", i+1, P[i]);
 
     //(Registrar resultados en el texto)
-    printf("Resultados:\n");
+    printf("Sus resultados se han guardado en el texto \"Analisis_estadistico.txt\".");
     fprintf(fp,"Resultados:\n");
 
-    printf("Media aritmetica: %f\n", mediaA(P,n));
+    fprintf(fp,"Maximo: %f\n:", P[0]);
+
+    fprintf(fp,"Minimo: %f\n:", P[n]);
+
     fprintf(fp,"Media: %f\n", mediaA(P,n));
 
-    printf("Media geometrica: %f\n", mediaG(P, n));
     fprintf(fp,"Media geometrica: %f\n", mediaG(P, n));
 
-    printf("Mediana: %f\n", mediana(P,n));
     fprintf(fp,"Mediana: %f\n", mediana(P,n));
 
-    printf("Varianza: %f\n", varianza(P, n));
     fprintf(fp,"Varianza: %f\n", varianza(P, n));
 
-    printf("Desviacion Estandar: %f\n", desviacionE(P, n));
     fprintf(fp,"Desviacion Estandar: %f\n", desviacionE(P, n));
 
-    printf("Coeficiente de Variacion: %f\n",coeficienteV(P,n));
     fprintf(fp,"Coeficiente de Variacion: %f\n",coeficienteV(P,n));
-    
-    for(i=0;i<9;i++)     
-        fprintf(fp,"Analisis %d: %f\n",i+1,AnEs[i]);
 
     fprintf(fp,"Cuartiles:\n");
     for(i=0;i<3;i++)
+    {
+        cuartiles(P,n,Cuart);
         fprintf(fp,"\t%f",Cuart[i]);
+    }
 
-    fprintf(fp,"Deciles:\n");
+    fprintf(fp,"\nDeciles:\n");
     for(i=0;i<9;i++)
+    {
+        deciles(P,n,Deci);
         fprintf(fp,"\t%f",Deci[i]);
+    }
 
-    fprintf(fp,"Percentiles:\n");
+    fprintf(fp,"\nPercentiles:\n");
     for(i=0;i<99;i++)
+    {
+        percentiles(P,n,Percen);
         fprintf(fp,"\t%f",Percen[i]);
-    
+    }
+
     fclose(fp);
     free(P);
 return 0;
