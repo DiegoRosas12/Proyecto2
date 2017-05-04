@@ -8,7 +8,6 @@
 #define N 50000
 #define CZ 48
 
-//nuevo
 
 int str2num(char *str)
 {
@@ -70,13 +69,19 @@ float varianza(float P[], int n,float media) {
     int i=0;
     float r;
     for(i=0;i<n;i++){
-        //r += ((P[i] - media)(P[i] - media)) / ((float)(n));
-        r += P[i];
+        r += ((P[i] - media)(P[i] - media)) / ((float)(n));
+        //r += P[i];
     }
     return r;
 }
-float desviacionE(float varianza) {
-    return sqrt(varianza);
+float desviacionE(float P[], int n, float media) {
+    int i=0;
+    float r;
+    for(i=0;i<n;i++){
+        r += ((P[i] - media)(P[i] - media)) / ((float)(n));
+        //r += P[i];
+    }
+    return sqrt(r);
 }
 float coeficienteV(float desviacion, float media) {
     return (desviacion/media*100);
@@ -189,8 +194,29 @@ int main(int argc, char *argv[]) {
     ordenar(P,n);
     for(i=0;i<n;i++)
         printf("P[%i]: %.3f\n", i+1, P[i]);
-    //(Registrar resultados en el texto)
 
+    //(Registrar resultados en el texto)
+    printf("Resultados:");
+    fprintf(fp,"Resultados:");
+
+    printf("Media aritmetica: %f\n", mediaA(P,n));
+    fprintf(fp,"Media: %f\n", mediaA(P,n));
+
+    printf("Media geometrica: %f\n", mediaG(P,n));
+    fprintf(fp,"Media geometrica: %f\n", mediaG(P,n));
+
+    printf("Mediana: %f\n", mediana(P,n));
+    fprintf(fp,"Mediana: %f\n", mediana(P,n));
+
+    printf("Varianza: %f\n", varianza(P, n, mediaA(P,n)));
+    fprintf(fp,"Varianza: %f\n", varianza(P, n, mediaA(P,n)));
+
+    printf("Desviacion Estandar: %f\n", desviacionE(P, n, mediaA(P,n)));
+    fprintf(fp,"Desviacion Estandar: %f\n", desviacionE(P, n, mediaA(P,n)));
+
+    printf("Coeficiente de Variacion: %f\n",coeficienteV(desviacionE(P, n, mediaA(P,n))), mediaA(P,n));
+    fprintf(fp,"Coeficiente de Variacion: %f\n",coeficienteV(desviacionE(P, n, mediaA(P,n))), mediaA(P,n));
+    
     for(i=0;i<9;i++)     
         fprintf(fp,"Analisis %d: %f\n",i+1,AnEs[i]);
 
