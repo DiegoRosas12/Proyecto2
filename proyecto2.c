@@ -8,7 +8,6 @@
 #define N 50000
 #define CZ 48
 
-
 int str2num(char *str)
 {
 	int num, j;
@@ -23,6 +22,7 @@ int str2num(char *str)
 	num = str[0] == 45 ? -num : num;
 	return num;
 }
+
 float ordenar(float P[], int n){
     int i, j;
     float aux;
@@ -39,55 +39,109 @@ float ordenar(float P[], int n){
 	}
     return 0;
 }
+
 float mediaA(float P[], int n) {
     int i;
     float med;
     for (i = 0, med = 0; i < n; med+=P[i++]);
     return med/n;
 }
+
 float mediaG(float P[], int n) {
-    int i=0;
+    int i;
     float r=1;
     for (i=0;i<n;i++){
         if(P[i]<0)
-        P[i] = P[i]*-1.0;
-        r *= P[i];
+            P[i] = P[i]*-1.0;
+        r *= powf(P[i], (1.0/(float)n));
     }
-    return powf(r, (1.0/(float)n));
+    return r;
 }
+
 float mediana(float P[], int n){
 	int num;
 	ordenar(P,n);
 	num = ceil(n/2);
 	return P[num];
 }
-float moda(){
-	
-    return 0;
+
+void moda(float *pA, int n, FILE *fp)
+{
+    int i, j, num_d=0, existe=0, fmoda=0;
+    //0 es valor, y 1 es frecuencia
+    float frec[n][2];
+    for (i = 0; i < n; i++)
+    {
+        frec[i][0] = 0;
+        frec[i][1] = 0;
+    }
+    //Calculo de frecuencias
+    for (i = 0; i < n; i++)
+    {
+        for (j = 0; j < num_d; j++)
+        {
+            if (frec[j][0] == *(pA+i))
+            {
+                existe = 1;
+                break;
+            }
+        }
+        if (existe)
+        {
+            frec[j][1]++;
+            existe = 0;
+        }
+        else
+        {
+            frec[j][0] = *(pA+i);
+            frec[j][1]++;
+            num_d++;
+        }
+    }
+    //Frecuencia de moda
+    for (i = 0; i < num_d; i++)
+    {
+        if(frec[i][1] > fmoda) {
+            fmoda = frec[i][1];
+        }
+    }
+    //Impresion de la moda
+    for (i = 0; i < num_d; i++)
+    {
+        if (frec[i][1] == fmoda)
+        {
+            if (fmoda != 1)
+                fprintf(fp, "Valor: %.3f\t Frecuencia: %.0f\n", frec[i][0], frec[i][1]);
+            else
+            {
+                fprintf(fp, "No existe moda\n\n");
+                break;
+            }
+        }
+    }
 }
-// Falta completar varianza
+
 float varianza(float P[], int n) {
     int i=0;
     float r;
-    for(i=0;i<n;i++){
-        r += ((P[i] - mediaA(P,n))*(P[i] - mediaA(P,n))) / (n);
-        //r += P[i];
-    }
+    for(i=0;i<n;i++)
+        r += ((P[i] - mediaA(P,n))/(float)n*(P[i] - mediaA(P,n)));
     return r;
 }
+
 float desviacionE(float P[], int n) {
     int i=0;
     float r;
-    for(i=0;i<n;i++){
-        r += ((P[i] - mediaA(P,n))*(P[i] - mediaA(P,n))) / (n);
-        //r += P[i];
-    }
+    for(i=0;i<n;i++)
+        r += ((P[i] - mediaA(P,n))/n*(P[i] - mediaA(P,n)));
     return sqrt(r);
 }
+
 float coeficienteV(float P[],int n) {
     return (desviacionE(P,n) / (mediaA(P,n)*100));
 }
-float cuartiles(float *P,int n,float *Q)    //Pegar en main despuÃˆs: cuartiles(P,n,Cuart);
+
+float cuartiles(float *P,int n,float *Q)
 {
     int pos, i;
     for(i=0;i<3;i++)
@@ -97,7 +151,8 @@ float cuartiles(float *P,int n,float *Q)    //Pegar en main despuÃˆs: cuartile
     }
     return 0;
 }
-float deciles(float *P,int n,float *D)  //Pegar en main despuÃˆs: deciles(P,n,Deci);
+
+float deciles(float *P,int n,float *D)
 {
     int pos, i;
     for(i=0;i<9;i++)
@@ -107,7 +162,8 @@ float deciles(float *P,int n,float *D)  //Pegar en main despuÃˆs: deciles(P,n,
     }
     return 0;
 }
-float percentiles(float *P,int n,float *Pc) //Pegar en main despuÃˆs: percentiles(P,n,Percen);
+
+float percentiles(float *P,int n,float *Pc)
 {
     int pos, i;
     for(i=0;i<99;i++)
@@ -118,9 +174,7 @@ float percentiles(float *P,int n,float *Pc) //Pegar en main despuÃˆs: percenti
     return 0;
 }
 
-
-
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[]){
     float max, min, *P, Cuart[3], Deci[9], Percen[99];
     int opc, n, i;
     FILE *fp;
@@ -171,12 +225,6 @@ int main(int argc, char *argv[]) {
             min = str2num(argv[2]);
             max = str2num(argv[3]);
     }
-    /*while (n < 1)
-	{
-		printf("Ingrese el numero de elementos: ");
-		scanf("%d", &n);
-	}
-    */
 	if (min > max)
     {
 		min = min + max;
@@ -189,54 +237,58 @@ int main(int argc, char *argv[]) {
         P[i] = (max - min)*rand() / RAND_MAX + min;
     }
 	for(i=0;i<n;i++)
-        printf("P[%i]: %.3f\n", i+1, P[i]);
-    printf("Ordenados:\n");
+        printf("P[%i]: %f\n", i+1, P[i]);
+    printf("\nOrdenados:\n");
     ordenar(P,n);
     for(i=0;i<n;i++)
-        printf("P[%i]: %.3f\n", i+1, P[i]);
-
-    //(Registrar resultados en el texto)
+        printf("P[%i]: %f\n", i+1, P[i]);
+    //Registrar resultados en el texto
     printf("Sus resultados se han guardado en el texto \"Analisis_estadistico.txt\".");
     fprintf(fp,"Resultados:\n");
-
-    fprintf(fp,"Maximo: %f\n:", P[0]);
-
-    fprintf(fp,"Minimo: %f\n:", P[n]);
-
-    fprintf(fp,"Media: %f\n", mediaA(P,n));
-
+    printf("Resultados:\n");
+    fprintf(fp,"Maximo: %f\n", P[n-1]);
+    printf("Maximo: %f\n", P[n-1]);
+    fprintf(fp,"Minimo: %f\n", P[0]);
+    printf("Minimo: %f\n", P[0]);
+    fprintf(fp,"Media aritmetica: %f\n", mediaA(P,n));
+    printf("Media aritmetica: %f\n", mediaA(P,n));
     fprintf(fp,"Media geometrica: %f\n", mediaG(P, n));
-
+    printf("Media geometrica: %f\n", mediaG(P, n));
     fprintf(fp,"Mediana: %f\n", mediana(P,n));
-
+    printf("Mediana: %f\n", mediana(P,n));
+    fprintf(fp, "Moda:\n");
+    printf(fp, "Moda:\n");
+    moda(P, n, fp);
     fprintf(fp,"Varianza: %f\n", varianza(P, n));
-
+    printf("Varianza: %f\n", varianza(P, n));
     fprintf(fp,"Desviacion Estandar: %f\n", desviacionE(P, n));
-
+    printf("Desviacion Estandar: %f\n", desviacionE(P, n));
     fprintf(fp,"Coeficiente de Variacion: %f\n",coeficienteV(P,n));
-
+    printf("Coeficiente de Variacion: %f\n",coeficienteV(P,n));
     fprintf(fp,"Cuartiles:\n");
+    printf("Cuartiles:\n");
     for(i=0;i<3;i++)
     {
         cuartiles(P,n,Cuart);
-        fprintf(fp,"\t%f",Cuart[i]);
+        fprintf(fp,"%f, ",Cuart[i]);
+        printf("%f, ",Cuart[i]);
     }
-
     fprintf(fp,"\nDeciles:\n");
     for(i=0;i<9;i++)
     {
         deciles(P,n,Deci);
-        fprintf(fp,"\t%f",Deci[i]);
+        fprintf(fp,"%f, ",Deci[i]);
+        printf("%f, ",Deci[i]);
     }
-
     fprintf(fp,"\nPercentiles:\n");
+    printf("Percentiles en archivo .txt\n");
     for(i=0;i<99;i++)
     {
         percentiles(P,n,Percen);
-        fprintf(fp,"\t%f",Percen[i]);
+        fprintf(fp,"%f, ",Percen[i]);
     }
-
     fclose(fp);
     free(P);
-return 0;
+    return 0;
 }
+
